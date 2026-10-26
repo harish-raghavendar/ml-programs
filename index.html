@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Learning Lab Programs</title>
+<style>
+:root{--bg:#000;--card:#000;--ink:#f2f2f2;--muted:#999;--accent:#f2f2f2;--code:#050505;--line:#242424}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:#000;color:#f5f5f5;padding:22px 16px;border-bottom:1px solid var(--line)}
+.wrap{max-width:900px;margin:auto;padding:0 14px}h1{margin:0 0 4px;font-size:clamp(22px,3vw,29px);font-weight:600;letter-spacing:-.03em}header p{margin:0;color:#999;font-size:13px}
+.note{margin:14px 0;padding:10px 12px;background:#080808;border:1px solid #292929;border-radius:7px;color:#bbb;font-size:13px}
+section{background:var(--card);margin:12px 0;padding:15px;border:1px solid var(--line);border-radius:8px;box-shadow:none}
+.sectionhead{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+h2{margin:0 0 3px;font-size:16px;font-weight:600;letter-spacing:-.01em}.meta{color:var(--muted);margin:0 0 12px;font-size:12px}
+button{background:#f0f0f0;color:#050505;border:0;border-radius:5px;padding:7px 11px;font-size:12px;font-weight:650;cursor:pointer}button:hover{background:#ccc}
+pre{margin:0;background:var(--code);color:#e4e4e7;padding:13px;border:1px solid #202020;border-radius:6px;overflow:auto;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre}
+.tip{margin:9px 0 0;color:#999;font-size:12px}footer{text-align:center;color:#666;padding:14px 10px 25px;font-size:11px}
+@media(max-width:600px){section{padding:11px}pre{font-size:11px;padding:10px}.wrap{padding:0 10px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>Machine Learning Lab Programs</h1>
+<p>Four programs from the lab manual. Copy-ready code.</p>
+</div></header>
+<main class="wrap">
+<div class="note"><strong>Note:</strong> Requires Python with <code>scikit-learn</code>, <code>pandas</code>, and <code>matplotlib</code>. Install if needed: <code>pip install scikit-learn pandas matplotlib</code>. The <code>%matplotlib inline</code> line from the PDF is a Jupyter-only command, so it is omitted for compatibility with regular Python files.</div>
+
+<section>
+<div class="sectionhead"><div><h2>Experiment 1 — Explore the ML Workflow</h2><p class="meta">PDF source-code pages 16–17 · Iris data, preprocessing and visualization</p></div><button onclick="copyCode('code1',this)">Copy code</button></div>
+<pre><code id="code1"># Import required libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+
+# Load the Iris dataset
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df["species"] = iris.target
+
+# Display first 5 rows
+print("First 5 rows of the Iris dataset:")
+print(df.head())
+
+# Basic exploration
+print("\\nShape of dataset (rows, columns):", df.shape)
+print("\\nStatistical summary:")
+print(df.describe())
+
+# Standardize the features
+features = df.drop("species", axis=1)
+scaler = StandardScaler()
+scaled_array = scaler.fit_transform(features)
+scaled_df = pd.DataFrame(scaled_array, columns=iris.feature_names)
+
+print("\\nFirst 5 rows after StandardScaler (scaled data):")
+print(scaled_df.head())
+
+# Visualize the data using a scatter plot
+plt.figure(figsize=(7, 5))
+plt.scatter(df["sepal length (cm)"], df["sepal width (cm)"],
+            c=df["species"], cmap="viridis")
+plt.xlabel("Sepal Length (cm)")
+plt.ylabel("Sepal Width (cm)")
+plt.title("Iris Dataset - Sepal Length vs Sepal Width")
+plt.colorbar(label="Species")
+plt.grid(True)
+plt.show()</code></pre>
+<p class="tip"><strong>Memory tip:</strong> Load → DataFrame → Explore → Scale → Plot.</p>
+</section>
+
+<section>
+<div class="sectionhead"><div><h2>Experiment 2 — Linear Regression</h2><p class="meta">PDF source-code pages 24–25 · Generate data, train, predict and plot</p></div><button onclick="copyCode('code2',this)">Copy code</button></div>
+<pre><code id="code2"># Import required libraries
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_regression
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# Create a synthetic dataset
+X, y = make_regression(
+    n_samples=100, n_features=1, noise=10, random_state=42
+)
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+print("Training samples:", len(X_train))
+print("Testing samples:", len(X_test))
+
+# Train the Linear Regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+print("\\nModel slope (coefficient):", model.coef_[0])
+print("Model intercept:", model.intercept_)
+
+# Evaluate the model
+score = model.score(X_test, y_test)
+print("\\nR-squared score on test data:", score)
+
+# Make a prediction for a new value
+new_value = [[2]]
+prediction = model.predict(new_value)
+print("\\nPrediction for X = 2:", prediction[0])
+
+# Visualize the regression line
+plt.figure(figsize=(7, 5))
+plt.scatter(X, y, color="blue", label="Actual data")
+plt.plot(X, model.predict(X), color="red", linewidth=2,
+         label="Regression line")
+plt.xlabel("X")
+plt.ylabel("y")
+plt.title("Linear Regression Fit")
+plt.legend()
+plt.grid(True)
+plt.show()</code></pre>
+<p class="tip"><strong>Memory tip:</strong> Make data → Split → Fit → Score → Predict → Plot.</p>
+</section>
+
+<section>
+<div class="sectionhead"><div><h2>Experiment 4 — K-Means Clustering</h2><p class="meta">PDF source-code pages 41–42 · Group Iris data into 3 clusters</p></div><button onclick="copyCode('code4',this)">Copy code</button></div>
+<pre><code id="code4"># Import required libraries
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.cluster import KMeans
+
+# Load the dataset
+iris = load_iris()
+X = iris.data
+
+# Apply K-Means clustering
+# n_clusters=3 because Iris has 3 species
+model = KMeans(n_clusters=3, random_state=42, n_init=10)
+model.fit(X)
+
+print("Cluster labels assigned to each data point:")
+print(model.labels_)
+print("\\nCluster centers (in original 4-D feature space):")
+print(model.cluster_centers_)
+
+# Visualize clusters using the first 2 features
+plt.figure(figsize=(7, 5))
+plt.scatter(X[:, 0], X[:, 1], c=model.labels_, cmap="viridis")
+plt.scatter(model.cluster_centers_[:, 0],
+            model.cluster_centers_[:, 1],
+            color="red", marker="X", s=200,
+            label="Cluster Centers")
+plt.xlabel("Sepal Length (cm)")
+plt.ylabel("Sepal Width (cm)")
+plt.title("K-Means Clustering on Iris Dataset")
+plt.legend()
+plt.grid(True)
+plt.show()</code></pre>
+<p class="tip"><strong>Memory tip:</strong> Load → KMeans(3) → Fit → Labels/centers → Plot.</p>
+</section>
+
+<section>
+<div class="sectionhead"><div><h2>Experiment 5 — PCA</h2><p class="meta">PDF source-code pages 49–50 · Reduce Iris data from 4 dimensions to 2</p></div><button onclick="copyCode('code5',this)">Copy code</button></div>
+<pre><code id="code5"># Import required libraries
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.decomposition import PCA
+
+# Load the dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+print("Original data shape (150 samples, 4 features):", X.shape)
+
+# Apply PCA to reduce to 2 dimensions
+pca = PCA(n_components=2)
+result = pca.fit_transform(X)
+print("\\nReduced data shape (150 samples, 2 components):", result.shape)
+print("\\nFirst 5 rows after PCA:")
+print(result[:5])
+
+# Check how much variance is retained
+print("\\nExplained variance ratio for each component:",
+      pca.explained_variance_ratio_)
+print("Total variance retained:", sum(pca.explained_variance_ratio_))
+
+# Visualize the 2 principal components
+plt.figure(figsize=(7, 5))
+plt.scatter(result[:, 0], result[:, 1], c=y, cmap="viridis")
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.title("PCA - Iris Dataset Reduced to 2 Dimensions")
+plt.colorbar(label="Species")
+plt.grid(True)
+plt.show()</code></pre>
+<p class="tip"><strong>Memory tip:</strong> Load → PCA(2) → Transform → Variance → Plot.</p>
+</section>
+</main>
+<footer>Prepared from the uploaded Machine Learning Techniques lab manual. Source code formatting was repaired where PDF text extraction had merged lines.</footer>
+<script>
+function copyCode(id, button){
+  const text = document.getElementById(id).innerText;
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => {
+      const old = button.innerText; button.innerText = "Copied!";
+      setTimeout(() => button.innerText = old, 1200);
+    }).catch(() => fallbackCopy(text, button));
+  } else { fallbackCopy(text, button); }
+}
+function fallbackCopy(text, button){
+  const area = document.createElement("textarea");
+  area.value = text; area.style.position = "fixed"; area.style.opacity = "0";
+  document.body.appendChild(area); area.select();
+  try { document.execCommand("copy"); button.innerText = "Copied!"; }
+  catch(e) { button.innerText = "Select code to copy"; }
+  document.body.removeChild(area);
+  setTimeout(() => button.innerText = "Copy code", 1200);
+}
+</script>
+</body>
+</html>
